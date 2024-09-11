@@ -1,0 +1,81 @@
+{% extends 'main_app/base.html' %}
+{% block page_title %}{{ Page_title }}{% endblock page_title %}
+{% block content %}
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title">{{ Page_title }}</h3>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th>Subject</th>
+                                        {% comment %} <th>Session</th> {% endcomment %}
+                                        <th>Practical Marks</th>
+                                        <th>Exam Marks</th>
+                                        <th>GPA</th>
+                                        <th>Grade</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for result in student_results %}
+                                    <tr>
+                                        <td>{{ result.subject }}</td>
+                                        {% comment %} <td>{{ result.session }}</td> {% endcomment %}
+                                        <td>{{ result.test }}</td>
+                                        <td>{{ result.exam }}</td>
+                                        <td>{{ result.calculate_gpa}}</td>
+                                        <td>
+                                            {% if result.calculate_gpa >= 3.6 and result.calculate_gpa <= 4.0 %}
+                                            <span class="badge badge-success">A+</span>
+                                        
+                                        {% elif result.calculate_gpa > 3.2 and result.calculate_gpa <= 3.6 %}
+                                            <span class="badge badge-success">A</span>
+                                        
+                                        {% elif result.calculate_gpa > 2.8 and result.calculate_gpa <= 3.2 %}
+                                            <span class="badge badge-success">B+</span>
+                                        
+                                        {% elif result.calculate_gpa > 2.4 and result.calculate_gpa <= 2.8 %}
+                                            <span class="badge badge-success">B</span>
+                                        
+                                        {% elif result.calculate_gpa > 2.0 and result.calculate_gpa <= 2.4 %}
+                                            <span class="badge badge-success">C+</span>
+                                        
+                                        {% elif result.calculate_gpa > 1.6 and result.calculate_gpa <= 2.0 %}
+                                            <span class="badge badge-success">C</span>
+                                        
+                                        {% elif result.calculate_gpa > 1.2 and result.calculate_gpa <= 1.6 %}
+                                            <span class="badge badge-danger">D+</span>
+                                        
+                                        {% elif result.calculate_gpa > 0.8 and result.calculate_gpa <= 1.2 %}
+                                            <span class="badge badge-danger">D</span>
+                                        
+                                        {% else %}
+                                            <span class="badge badge-danger">F</span>
+                                        {% endif %}                                        
+                                        </td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr>
+                                        <td colspan="6">No results available</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock content %}
