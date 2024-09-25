@@ -1,7 +1,56 @@
 {% extends 'main_app/base.html' %}
 {% block page_title %}{{ Page_title }}{% endblock page_title %}
 {% block content %}
+<style>
+    /* Unique styling for the GPA cell */
+    .gpa {
+        display: flex;
+        margin-left:25rem ;
+    }
+    .gpa_text{
+        margin: 0.5rem;
+    }
+    .gpa_amount {
+        font-weight: bold;
+        color: #333;
+        {% comment %} background: linear-gradient(90deg, rgba(255, 223, 186, 0.7) 0%, rgba(255, 186, 186, 0.7) 100%); {% endcomment %}
+        background: khaki;
+        border-radius: 5px;
+        aling-items: center;
+        padding: 0.5rem;
+        transition: all 0.3s ease;
+        margin-left:26rem;
+    }
 
+    .gpa_amount:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+</style>
+   
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var gpa = document.getElementById("gpa");
+        var gradeCells = document.querySelectorAll("td"); // Select all table data cells
+
+        // Variable to track if any grade is dangerous
+        var hasDangerGrade = false;
+
+        // Loop through each grade cell to check for badge-danger
+        gradeCells.forEach(function(cell) {
+            if (cell.querySelector('.badge-danger')) { // Check if the cell contains a badge-danger
+                hasDangerGrade = true;
+            }
+        });
+
+        // Hide CGPA section if any dangerous grades are found
+        if (hasDangerGrade) {
+            gpa.style.display = "none"; // Hide the CGPA section
+        } else {
+            gpa.style.display = "flex"; // Show the CGPA section
+        }
+    });
+</script>
 <section class="content">
     <div class="container-fluid">
         <div class="row">
@@ -31,7 +80,7 @@
                                         {% comment %} <td>{{ result.session }}</td> {% endcomment %}
                                         <td>{{ result.test }}</td>
                                         <td>{{ result.exam }}</td>
-                                        <td>{{ result.calculate_gpa}}</td>
+                                        <td id="result_guess">{{ result.calculate_gpa}}</td>
                                         <td>
                                             {% if result.calculate_gpa >= 3.6 and result.calculate_gpa <= 4.0 %}
                                             <span class="badge badge-success">A+</span>
@@ -67,8 +116,16 @@
                                         <td colspan="6">No results available</td>
                                     </tr>
                                     {% endfor %}
+                                    {% comment %} <tr>
+                                        <td> CGPA </td>
+                                        <td>{{student_results.calculate_total_gpa}}</td>
+                                    </tr> {% endcomment %}
                                 </tbody>
                             </table>
+                            <div class="gpa" id="gpa">
+                                <h3 class="gpa_text">CGPA</h3>
+                                <h5 class="gpa_amount">{{cgpa}}</h5>
+                            </div>
                         </div>
                     </div>
                     <!-- /.card-body -->

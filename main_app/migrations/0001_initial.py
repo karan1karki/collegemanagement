@@ -80,6 +80,8 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('admin', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
                 ('course', models.ForeignKey(null=True, on_delete=django.db.models.deletion.DO_NOTHING, to='main_app.course')),
+                # ('attendance_staff', models.CharField(choices=[(1, 'present'), (2, 'absent')], default=1, max_length=1)),
+                # ("attendance_image", models.ImageField(upload_to=''))
             ],
         ),
         migrations.CreateModel(
@@ -208,4 +210,15 @@ class Migration(migrations.Migration):
                 ('admin', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
         ),
+        migrations.AddField(
+            model_name='staff',
+            name='attendance_image',
+            field=models.ImageField(blank=True, null=True, upload_to='attendance_images/'),
+        ),
+        migrations.AddField(
+            model_name='staff',
+            name='attendance_status',
+            field=models.IntegerField(choices=[(1, 'Present'), (2, 'Absent')], default=1),
+        ),
+        
     ]

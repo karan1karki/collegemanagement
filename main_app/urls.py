@@ -18,6 +18,8 @@ Including another URLconf
 from django.urls import path
 
 from main_app.EditResultView import EditResultView
+from django.conf import settings
+from django.conf.urls.static import static
 
 from . import hod_views, staff_views, student_views, views
 
@@ -112,7 +114,7 @@ urlpatterns = [
          name='edit_student_result'),
     path('staff/result/fetch/', staff_views.fetch_student_result,
          name='fetch_student_result'),
-
+     path('staff/attendance', staff_views.staff_attendance, name='staff_attendance'),
 
 
     # Student
@@ -134,4 +136,4 @@ urlpatterns = [
     path('student/view/result/', student_views.student_view_result,
          name='student_view_result'),
 
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -204,10 +204,17 @@ def student_view_result(request):
     # Get the student result, filter by student ID
     student_results = StudentResult.objects.filter(student_id=student.id)
 
-    # Pass the student results to the template
+  # Calculate CGPA
+    total_gpa = sum([result.calculate_gpa() for result in student_results])
+    number_of_subjects = student_results.count()
+
+    cgpa = round(total_gpa / number_of_subjects, 2) if number_of_subjects > 0 else 0.0
+
     context = {
-        "student_results": student_results,
-        "Page_title": "View Result",
+        'student_results': student_results,
+        'Page_title': 'Student Results',
+        'cgpa': cgpa,  # Pass the CGPA to the template
     }
+
 
     return render(request, "student_template/student_view_result.html", context)

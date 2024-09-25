@@ -204,22 +204,83 @@ def add_subject(request):
     return render(request, 'hod_template/add_subject_template.html', context)
 
 
+def bubble_sort_staff_by_course(staff_list):
+    n = len(staff_list)
+    
+    # Outer loop for each pass through the list
+    for i in range(n):
+        swapped = False
+        
+        # Inner loop to compare adjacent elements
+        for j in range(0, n - i - 1):
+            # Compare the 'course.name' field of adjacent staff members
+            if staff_list[j].staff.course.name > staff_list[j + 1].staff.course.name:
+                # Swap if the course name of the current staff is greater than the next one
+                staff_list[j], staff_list[j + 1] = staff_list[j + 1], staff_list[j]
+                swapped = True
+        
+        # If no elements were swapped in the inner loop, break early
+        if not swapped:
+            break
+    
+    return staff_list
+
+# Usage in your Django view
 def manage_staff(request):
+    # Fetch all staff members with user_type 2 (assuming they are staff)
     allStaff = CustomUser.objects.filter(user_type=2)
+
+    # Sort staff by their course name using bubble sort
+    sorted_staff = bubble_sort_staff_by_course(list(allStaff))
+
+    # Pass the sorted staff members to the context
     context = {
-        'allStaff': allStaff,
+        'allStaff': sorted_staff,
         'page_title': 'Manage Staff'
     }
+    
     return render(request, "hod_template/manage_staff.html", context)
 
 
+# ALgorithm of bubble_shot algorithm 
+def bubble_sort_students_by_course(students):
+    n = len(students)
+    
+    # Outer loop for each pass through the list
+    for i in range(n):
+        swapped = False
+        
+        # Inner loop to compare adjacent elements
+        for j in range(0, n - i - 1):
+            # Compare the 'student.course.name' field of adjacent students
+            if students[j].student.course.name > students[j + 1].student.course.name:
+                # Swap if the course name of the current student is greater than the next one
+                students[j], students[j + 1] = students[j + 1], students[j]
+                swapped = True
+        
+        # If no elements were swapped in the inner loop, break early
+        if not swapped:
+            break
+    
+    return students
+
+# Example usage in your Django view
 def manage_student(request):
-    students = CustomUser.objects.filter(user_type=3)
+    # Fetch all students of user_type 3 (assuming they are the students)
+    students = CustomUser.objects.filter(user_type=3).select_related('student__course')
+
+    # Sort students by their course name using bubble sort
+    sorted_students = bubble_sort_students_by_course(list(students))
+
+    # Pass the sorted students to the context
     context = {
-        'students': students,
+        'students': sorted_students,
         'page_title': 'Manage Students'
     }
+    
     return render(request, "hod_template/manage_student.html", context)
+
+
 
 
 def manage_course(request):

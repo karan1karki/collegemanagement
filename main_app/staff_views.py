@@ -1,14 +1,24 @@
 import json
+import os
+import csv
+import base64
+# import face_recognition
 
 from django.contrib import messages
 from django.core.files.storage import FileSystemStorage
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import (HttpResponseRedirect, get_object_or_404,redirect, render)
 from django.urls import reverse
+from django.conf import settings
+from django.core.files.base import ContentFile
+
+
 from django.views.decorators.csrf import csrf_exempt
 
 from .forms import *
 from .models import *
+
+# CSV_FILE_PATH = os.path.join(settings.MEDIA_ROOT, 'attendance_data.csv
 
 
 def staff_home(request):
@@ -284,6 +294,85 @@ def staff_add_result(request):
         except Exception as e:
             messages.warning(request, "Error Occured While Processing Form")
     return render(request, "staff_template/staff_add_result.html", context)
+
+def staff_attendance(request):
+    # Fetch the staff member related to the logged-in user
+    staff = get_object_or_404(Staff, admin=request.user)
+    
+    # Retrieve all sessions
+    sessions = Session.objects.all()
+    
+    # Additional context (optional)
+    context = {
+        'sessions': sessions,
+        'page_title': "Staff Attendance"
+    }
+    if request.method == 'POST':
+        session_id = request.POST.get('session')
+        image_data = request.POST.get('image')
+        # attendance_date = request.POST.get('date')
+
+        if not session_id or not image_data :
+            return JsonResponse({'status': 'error', 'message': 'Missing data!'})
+
+        # Find the staff object of the logged-in user
+        staff = Staff.objects.get(admin=request.user)
+
+        # Decode the base64 image
+        format, imgstr = image_data.split(';base64,')  # Separate base64 data
+        ext = format.split('/')[-1]  # Extract the image extension (png, jpg)
+        image_file = ContentFile(base64.b64decode(imgstr), name=f'staff_{staff.id}.{ext}')
+
+        # Save the image to staff attendance_image field
+        staff.attendance_image = image_file
+        staff.save()
+
+        # Create attendance report for the session
+        attendance, created = Attendance.objects.get_or_create(session_id=session_id)
+        AttendanceReport.objects.create(student=None, attendance=attendance, status=True)
+
+        return JsonResponse({'status': 'success', 'message': 'Attendance taken successfully!'})
+
+    # Render the attendance page
+    return render(request, "staff_template/staff_attendance.html", context)
+# def process_image(request):
+#     if request.method == "POST":
+#         # Get the image from the POST data
+#         image_data = request.POST.get('image')
+        
+#         # Decode the base64 image
+#         format, imgstr = image_data.split(';base64,')
+#         img_data = base64.b64decode(imgstr)
+#         np_img = np.fromstring(img_data, np.uint8)
+        
+#         # Convert to OpenCV image
+#         img = cv2.imdecode(np_img, cv2.IMREAD_COLOR)
+
+#         # Load the known faces (this can be modified to match with student data)
+#         # In practice, you would load this from a database
+#         known_face_encodings = [...]  # List of known face encodings (load from database)
+#         known_face_names = [...]  # List of corresponding student names
+
+#         # Find face locations and encodings in the uploaded image
+#         face_locations = face_recognition.face_locations(img)
+#         face_encodings = face_recognition.face_encodings(img, face_locations)
+
+#         # Compare the faces in the image with the known faces
+#         for face_encoding in face_encodings:
+#             matches = face_recognition.compare_faces(known_face_encodings, face_encoding)
+#             name = "Unknown"
+            
+#             # If a match is found, get the student's name
+#             if True in matches:
+#                 first_match_index = matches.index(True)
+#                 name = known_face_names[first_match_index]
+
+#                 # Return success with the student's name
+#                 return JsonResponse({"status": "success", "student_name": name})
+        
+#         # If no matches found
+#         return JsonResponse({"status": "fail"})
+
 
 
 @csrf_exempt

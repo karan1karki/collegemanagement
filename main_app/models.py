@@ -78,6 +78,12 @@ class Student(models.Model):
 class Staff(models.Model):
     course = models.ForeignKey(Course, on_delete=models.DO_NOTHING, null=True, blank=False)
     admin = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    ATTENDANCE_STATUS_CHOICES = [
+        (1, "Present"),
+        (2, "Absent"),
+    ]
+    attendance_status = models.IntegerField(choices=ATTENDANCE_STATUS_CHOICES, default=2)
+    attendance_image = models.ImageField(upload_to='attendance_images/', null=True, blank=True)
 
     def __str__(self):
         return f"{self.admin.last_name} {self.admin.first_name}"
@@ -168,7 +174,8 @@ class StudentResult(models.Model):
 
         # Take the average to calculate the GPA
         return round((test_gpa + exam_gpa) / 2, 2)
-
+  
+    
 @receiver(post_save, sender=CustomUser)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
