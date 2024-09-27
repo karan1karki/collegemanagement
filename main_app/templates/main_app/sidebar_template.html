@@ -246,6 +246,19 @@
                         </p>
                     </a>
                 </li>
+                
+                {% comment %} <li class="nav-item">
+                    {% url 'admin_staff_attendance' as admin_staff_attendance %}
+
+                    <a href="{{ admin_staff_attendance }}"
+                        class="nav-link  {% if admin_staff_attendance == request.path %} active {% endif %}">
+                        <i class="nav-icon fas fa-calendar-alt"></i>
+                        <p>
+                            Staff Attendance
+
+                        </p>
+                    </a>
+                </li> {% endcomment %}
                 <li class="nav-item">
                     {% url 'student_feedback_message' as student_feedback_message %}
 

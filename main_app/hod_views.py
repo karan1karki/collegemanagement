@@ -15,6 +15,8 @@ from .models import *
 
 
 def admin_home(request):
+    Staffs = CustomUser.objects.filter(user_type=2)
+    staff_data = Staff.objects.all()
     total_staff = Staff.objects.all().count()
     total_students = Student.objects.all().count()
     subjects = Subject.objects.all()
@@ -70,6 +72,8 @@ def admin_home(request):
     context = {
         'page_title': "Administrative Dashboard",
         'total_students': total_students,
+        'staffs' : Staffs,
+        'staff_data' : staff_data,
         'total_staff': total_staff,
         'total_course': total_course,
         'total_subject': total_subject,

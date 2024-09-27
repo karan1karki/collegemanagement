@@ -134,12 +134,73 @@
             </div>
             <!-- /.card -->
           </div>
-
-
           <div class="col-lg-6">
             
           </div>
         
+        </div>
+        <div class="row">
+          <div class="col-lg-12">
+            <!-- BAR CHART -->
+            <div class="card card-dark">
+              <div class="card-header">
+                <h3 class="card-title">Staff View Attendance </h3>
+                <div class="card-tools">
+                  <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>
+                  </button>
+                  <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i></button>
+                </div>
+              </div>
+              <div class="table-responsive">
+                <table class="table table-bordered table-striped" id="staff-attendance-table">
+                  <thead>
+                    <tr>
+                      <th>Staff Name/Date</th>
+                      <!-- Dynamically create date headers -->
+                      {% for staff in staffs %}
+                        <td>{{ staff.first_name }}</td>
+                      {% endfor %}
+                    </div>
+                    </tr>
+                    {% for staff in staffs %}
+                      {% if staff.last_login == '' %}
+                        <td> </td>
+                      {% else%}
+                        <td>{{staff.last_login}}</td>
+                      {% endif %}
+                      <tr> 
+                        <td>{{staff.last_login}}</td>
+                        {% for staff1 in staff_data%}
+                          {% if staff1.attendance_status == 1 %}
+                            <td>P</td>
+                          {% else %}
+                            <td>A</td>
+                          {% endif %}  
+                        {% endfor %}
+                      </tr>
+                    {% endfor %}
+                  </thead>
+                  <tbody>
+                    <!-- Dynamic rows for each staff's attendance -->
+                    {% comment %} {% for staff in staff_name_list %}
+                      <tr>
+                        <td>{{ staff }}</td>
+                        {% for attendance in attendance_data[staff] %}
+                          <td>{{ "P" if attendance == 1 else "A" }}</td>
+                        {% endfor %}
+                      </tr>
+                    {% endfor %} {% endcomment %}
+                  </tbody>
+                </table>
+              </div>
+              <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+          </div>
+          
+          <div class="col-lg-6">
+            
+          </div>
         </div>
 
         <div class="row">
